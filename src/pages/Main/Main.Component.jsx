@@ -39,9 +39,7 @@ class MainComponent extends React.Component {
     // this.setState({
     //   currentDog: currentDogData
     // })
-    fetch('http://shibe.online/api/shibes?count=1&urls=true&httpsUrls=true', {
-      cors: 'no-cors'
-    })
+    fetch('http://shibe.online/api/shibes?count=1&urls=true&httpsUrls=false')
       .then(response => response.json())
       .then(data => {
         const currentDogImage = data[0];
