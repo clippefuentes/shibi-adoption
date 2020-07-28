@@ -13,6 +13,21 @@ const config = {
   measurementId: "G-LZWQCT98QM"
 };
 
+export const getDogGnerated = async () => {
+  const randomNumber = Math.floor(Math.random() * 5) + 1;
+  const docRef = firestore.collection('dogs').doc(`${randomNumber}`);
+  await docRef.get().then(function (doc) {
+    if (doc.exists) {
+      return doc.data();
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  }).catch(function (error) {
+    console.log("Error getting document:", error);
+  });
+}
+
 export const createUser = async (userAuth, additionalData) => {
   if (!userAuth) return;
   const userData = firestore.doc(`users/${userAuth.uid}`);

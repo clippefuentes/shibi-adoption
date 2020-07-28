@@ -8,7 +8,7 @@ import {
   MainLink,
 } from './Main.Styles';
 
-import { createOrder } from '../../firebase/firebase.utils';
+import { createOrder, firestore } from '../../firebase/firebase.utils';
 
 class MainComponent extends React.Component {
   constructor(props) {
@@ -30,8 +30,30 @@ class MainComponent extends React.Component {
     console.log(dogOrdered);
   }
 
-  generateDog = () => {
+  generateDog = async () => {
+    let dogData = {};
     const randomDogId = Math.round(Math.random() * (100000000 - 1) + 1);
+    const randomNumber = Math.floor(Math.random() * 15) + 1;
+    const docRef = firestore.collection('dogs').doc(`${randomNumber}`);
+    await docRef.get().then(function (doc) {
+      if (doc.exists) {
+        dogData = {
+          image: doc.data().imgLink,
+          dogId: randomDogId,
+        }
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    }).catch(function (error) {
+      console.log("Error getting document:", error);
+    });
+    this.setState({
+      currentDog: dogData
+    }, () => {
+      console.log('State: ', this.state)
+
+    })
     // const currentDogData = {
     //   image: randomDogId,
     //   dogId: randomDogId,
@@ -39,19 +61,23 @@ class MainComponent extends React.Component {
     // this.setState({
     //   currentDog: currentDogData
     // })
-    fetch('https://shibe.online/api/shibes?count=1&urls=true&httpsUrls=false')
-      .then(response => response.json())
-      .then(data => {
-        const currentDogImage = data[0];
-        const currentDogData = {
-          image: currentDogImage,
-          dogId: randomDogId,
-        }
-        this.setState({
-          currentDog: currentDogData
-        })
-        console.log(currentDogData);
-      })
+    // fetch('https://shibe.online/api/shibes?count=1&urls=true&httpsUrls=false' , {
+    //   headers: {
+    //     "Access-Control-Allow-Origin": "*"
+    //   },
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     const currentDogImage = data[0];
+    //     const currentDogData = {
+    //       image: currentDogImage,
+    //       dogId: randomDogId,
+    //     }
+    //     this.setState({
+    //       currentDog: currentDogData
+    //     })
+    //     console.log(currentDogData);
+    //   })
   }
 
   componentDidMount() {
